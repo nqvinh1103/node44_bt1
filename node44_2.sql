@@ -320,7 +320,6 @@ CREATE TABLE like_res (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (res_id) REFERENCES restaurant(res_id) ON DELETE CASCADE
 );
-ADD COLUMN
 
 
 INSERT INTO like_res (user_id, res_id, date_like) VALUES
@@ -373,6 +372,33 @@ INSERT INTO orders (user_id, food_id, amount, discount_code, arr_sub_id) VALUES
 # REMOVE USER -> REMOVE COMMENT -> REMOVE LIKE -> SUBCRIBE -> .........-> USER
 # PROCEDURE 
 # be call procedure
+-- Tìm 5 người đã like nhà hàng nhiều nhất
+SELECT user_id, COUNT(*) AS like_count
+FROM like_res
+GROUP BY user_id
+ORDER BY like_count DESC
+LIMIT 5;
+-- Tìm 2 nhà hàng có lượt like nhiều nhất
+SELECT res_id, COUNT(*) AS like_count
+FROM like_res
+GROUP BY res_id
+ORDER BY like_count DESC
+LIMIT 2;
+-- Tìm người đã đặt hàng nhiều nhất
+SELECT user_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY user_id
+ORDER BY order_count DESC
+LIMIT 1;
+-- Tìm người dùng không hoạt động trong hệ thống (không đặt hàng, không like, không đánh giá nhà hàng):
+SELECT u.user_id, u.full_name
+FROM users u
+LEFT JOIN orders o ON u.user_id = o.user_id
+LEFT JOIN like_res lr ON u.user_id = lr.user_id
+LEFT JOIN rate_res rr ON u.user_id = rr.user_id
+WHERE o.user_id IS NULL AND lr.user_id IS NULL AND rr.user_id IS NULL;
+
+
 
 # trigger
 
